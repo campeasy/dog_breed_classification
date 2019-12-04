@@ -11,6 +11,7 @@ from torch.nn import Linear
 class DogBreedClassifier():
 
     def __init__(self, labels_path):
+        self.dog_labels_start_index = 151
         with open(labels_path) as f:
             self.labels = eval(f.read())
         self.transform = transforms.Compose([
@@ -29,7 +30,7 @@ class DogBreedClassifier():
             out_sort = out.sort(descending=True)
             result = list(zip(out_sort[1][:10].tolist(), out_sort[0][:10].tolist()))
             for idx, probability in result:
-                print("{:.2f}%  {}".format(probability*100, self.labels[idx+151]))
+                print("{:.2f}%  {}".format(probability*100, self.labels[self.dog_labels_start_index + idx]))
             return result
 
 if __name__ == "__main__":
