@@ -78,7 +78,7 @@ class SocketTCP{
         }
 
         int check_server_address(){
-            if(server_ip == NULL || strcmp(server_ip,"\0") == 0 || server_port == -1){
+            if(strcmp(server_ip,"\0") == 0 || server_port == -1){
                 return -1;
             }
 
@@ -175,14 +175,17 @@ class SocketTCP{
             }
 
             if(check_server_address() != 0){
-                fprintf(stderr, "[FAIL] Server Address Not Valid\n");
+                fprintf(stderr, "[FAIL] Can't create the socket - Setted Server Address Not Valid\n");
                 return -1;
             }
 
-            if(create_socket() != 0) return -1;
-            if(connect_socket() != 0) return -1;
+            if(create_socket() != 0 || connect_socket() != 0){ 
+                fprintf(stderr, "[FAIL] Socket is NOT alive\n");
+                return -1;
+            }
 
             socket_is_alive = 1;
+            fprintf(stdout, "[OK] Socket is alive\n");
             return 0;
         }
 
@@ -201,10 +204,13 @@ class SocketTCP{
                 return -1;
             }
 
-            if(create_socket() != 0) return -1;
-            if(connect_socket() != 0) return -1;
+            if(create_socket() != 0 || connect_socket() != 0){ 
+                fprintf(stderr, "[FAIL] Socket is NOT alive\n");
+                return -1;
+            }
 
             socket_is_alive = 1;
+            fprintf(stdout, "[OK] Socket is alive\n");
             return 0;
         }
 
@@ -233,7 +239,7 @@ class SocketTCP{
 
             strncpy(buffer_to_send, "", BUFF_SEND_MAX_SIZE);
             strncpy(buffer_to_send, data, BUFF_SEND_MAX_SIZE);
-            
+
             if(send(socket_descriptor, buffer_to_send, BUFF_SEND_MAX_SIZE, 0) == -1){
                 fprintf(stderr, "[FAIL] Can't send data - Error sending data\n");
                 return -1;
