@@ -22,7 +22,6 @@ using namespace std;
 
 class SocketTCP{
     private:
-        // ----- Private Socket Attributes -----
         // Socket Informations:
         int socket_descriptor;
         int socket_is_alive;
@@ -35,9 +34,8 @@ class SocketTCP{
         // Data Buffers:
         char buffer_to_send[BUFF_SEND_MAX_SIZE];
         char buffer_to_recv[BUFF_RECV_MAX_SIZE];
-        // -------------------------------------
 
-        // ----- Private Methods for constructing the Server Address -----
+        // Private Methods for handling the Server Address:
         int set_server_ip(char * temp_ip){
             if(temp_ip == NULL){
                 fprintf(stderr, "[FAIL] Can't set the Server IP\n");
@@ -78,40 +76,46 @@ class SocketTCP{
             fprintf(stdout, "[OK] Server Address correctly constructed - (%s , %d)\n", server_ip, server_port);
             return 0;
         }
-        // ---------------------------------------------------------------
 
-        int create_socket(){
-            if(socket_is_alive == 1){
-                fprintf(stderr, "[FAIL] Can't create socket - Already alive\n");
+        int check_server_address(){
+            if(server_ip == NULL || strcmp(server_ip,"\0") == 0 || server_port == -1){
                 return -1;
             }
 
+            return 0;
+        }
+
+        // Private Methods for handling Socket Operations:
+        int create_socket(){
             socket_descriptor = socket(AF_INET, SOCK_STREAM, 0);
             if(socket_descriptor == -1){
                 fprintf(stderr, "[FAIL] Can't create the socket - Error creating\n");
                 return -1;
             }
 
-            socket_is_alive = 1;
             fprintf(stdout, "[OK] Socket correctly created - Descriptor: %d\n", socket_descriptor);
 
             return 0;
         }
 
-        // TODO: connect_socket()
-
-        int close_socket(){
-            if(socket_is_alive == 0){
-                fprintf(stderr, "[FAIL] Can't close socket that is not alive\n");
+        int connect_socket(){
+            int result = 0;
+            result = connect(socket_descriptor, (struct sockaddr *) &server_address, sizeof(server_address));
+            if(result != 0){
+                fprintf(stderr, "[FAIL] Can't establish connection - Error: %d \n", errno);
                 return -1;
             }
 
+            fprintf(stdout, "[OK] Connection correctly established\n");
+            return 0;
+        }
+
+        int close_socket(){
             if(close(socket_descriptor) != 0){
                 fprintf(stderr, "[FAIL] Can't close socket - Descriptor: %d\n", socket_descriptor);
                 return -1;
             }
-            
-            socket_is_alive = 0;
+
             fprintf(stdout, "[OK] Socket correctly closed\n");
 
             return 0;
@@ -136,7 +140,7 @@ class SocketTCP{
             }
         }
 
-        // ----- Public Methods for Getting/Setting Server Address Informations -----
+        // Public Methods for Getting/Setting Server Address Informations:
         string socket_get_server_ip(){
             string str(server_ip);
             return str;
@@ -148,8 +152,12 @@ class SocketTCP{
 
         int socket_set_server(char * _server_ip, int _server_port){
             if(socket_is_alive == 1){
-                char * temp_error = "[FAIL] Can't set the server infos, socket already opened";
-                char * temp_warning = "If want set another server, first close the socket";
+                char temp_error[256];
+                char temp_warning[256];
+
+                strcpy(temp_error, "[FAIL] Can't set the server infos, socket already opened");
+                strcpy(temp_warning, "If want set another server, first close the socket");
+
                 fprintf(stderr, "%s - IP: %s Port: %d\n%s\n", temp_error, server_ip, server_port, temp_warning);
                 return -1;
             }
@@ -158,8 +166,82 @@ class SocketTCP{
             if(create_server_address(_server_ip, _server_port) != 0) return -1;
             return 0;
         }
-        // --------------------------------------------------------------------------
 
+        // Exposed Public Methods for Operations: 
+        int socket_open(){
+            if(socket_is_alive == 1){
+                fprintf(stderr, "[FAIL] Can't create the socket - Socket already alive\n");
+                return -1;
+            }
 
-        // TODO: socket_open(), socket_send_data(data_dim), socket_recv_data(data_dim), socket_close()
+            if(check_server_address() != 0){
+                fprintf(stderr, "[FAIL] Server Address Not Valid\n");
+                return -1;
+            }
+
+            if(create_socket() != 0) return -1;
+            if(connect_socket() != 0) return -1;
+
+            socket_is_alive = 1;
+            return 0;
+        }
+
+        int socket_open(char * _server_ip, int _server_port){
+            if(socket_is_alive == 1){
+                fprintf(stderr, "[FAIL] Can't create the socket - Socket already alive\n");
+                return -1;
+            }
+
+            if(create_server_address(_server_ip, _server_port) != 0){
+                return -1;
+            }
+
+            if(check_server_address() != 0){
+                fprintf(stderr, "[FAIL] Server Address Not Valid");
+                return -1;
+            }
+
+            if(create_socket() != 0) return -1;
+            if(connect_socket() != 0) return -1;
+
+            socket_is_alive = 1;
+            return 0;
+        }
+
+        int socket_close(){
+            if(socket_is_alive == 0){
+                fprintf(stderr, "[FAIL] Can't close socket that is not alive\n");
+                return -1;
+            }
+
+            if(close_socket() != 0) return -1;
+
+            socket_is_alive = 0;
+            return 0;
+        }
+
+        int socket_send_data(char * data, int data_dim){
+            if(socket_is_alive == 0){
+                fprintf(stderr, "[FAIL] Can't send data - Socket is not alive\n");
+                return -1;
+            }
+
+            if(data_dim > BUFF_SEND_MAX_SIZE){
+                fprintf(stderr, "[FAIL] Can't send data - Too much data\n");
+                return -1;
+            }
+
+            strncpy(buffer_to_send, "", BUFF_SEND_MAX_SIZE);
+            strncpy(buffer_to_send, data, BUFF_SEND_MAX_SIZE);
+            
+            if(send(socket_descriptor, buffer_to_send, BUFF_SEND_MAX_SIZE, 0) == -1){
+                fprintf(stderr, "[FAIL] Can't send data - Error sending data\n");
+                return -1;
+            }
+
+            fprintf(stdout, "[OK] Data sent correctly\n");
+            return 0;
+        }
+
+        // TODO: socket_recv_data()
 };
