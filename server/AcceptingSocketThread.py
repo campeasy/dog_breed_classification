@@ -1,45 +1,47 @@
-import os
-import signal
 import sys
-import time
 import socket
 
 from threading import Thread
 from concurrent.futures import ThreadPoolExecutor
 
-HOST = '' # all availabe interfaces
-PORT = 9999 # arbitrary non privileged port 
-
 class AcceptingSocketThread(Thread):
-    def __init__(self, response):
+
+    def __init__(self, port, response):
         Thread.__init__(self)
+
         self.is_closing = False
-        try:
-            self.connection_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        except socket.error as msg:
-            print("Could not create socket. Error Code: ", str(msg[0]), "Error: ", msg[1])
-            sys.exit(1)
+        self.port = port
 
-        print("[-] Socket Created")
-
-        # bind socket
-        try:
-            self.connection_socket.bind((HOST, PORT))
-            print("[-] Socket Bound to port " + str(PORT))
-        except socket.error as msg:
-            print("Bind Failed. Error Code: {} Error: {}".format(str(msg[0]), msg[1]))
-            sys.exit(1)
+        self.accepting_socket = self.__init_accepting_socket(port)
 
         self.pool = ThreadPoolExecutor(200)
         self.response = response
 
+    def __init_accepting_socket(self, port):
+        try:
+            accepting_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        except socket.error as error_message:
+            print("Socket Creation Failed. Error Code: {} Error: {}".format(str(error_message[0]), error_message[1]))
+            sys.exit(1)
+
+        print("[-] Socket Created")
+
+        try:
+            accepting_socket.bind(('', self.port)) # all availabe interfaces
+            print("[-] Socket Bound to port " + str(self.port))
+        except socket.error as error_message:
+            print("Socket Bind Failed. Error Code: {} Error: {}".format(str(error_message[0]), error_message[1]))
+            sys.exit(1)
+            
+        return accepting_socket
+
     def run(self):
-        self.connection_socket.listen(128)
+        self.accepting_socket.listen(128)
         print("Listening...")
         while not self.is_closing:
             try:
-                conn, addr = self.connection_socket.accept()
-                print("[-] Connected to " + addr[0] + ":" + str(addr[1]))
+                conn, addr = self.accepting_socket.accept()
+                print("[-] Connected to {} : {}".format(addr[0], str(addr[1])))
                 self.pool.submit(self.response, (conn))
             except socket.error as msg:
                 print("Stop listening")
@@ -49,6 +51,7 @@ class AcceptingSocketThread(Thread):
 
     def close(self):
         print("Closing...")
-        self.is_closing = True
-        self.connection_socket.shutdown(socket.SHUT_RDWR)
-        self.connection_socket.close()
+        if not self.is_closing:
+            self.is_closing = True
+            self.accepting_socket.shutdown(socket.SHUT_RDWR)
+            self.accepting_socket.close()

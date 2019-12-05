@@ -1,47 +1,19 @@
-import os
-import io
-import sys
 import signal
-import socket
+import argparse
 import functools
 
-from PIL import Image
-
-from DogBreedClassifier import DogBreedClassifier
-from AcceptingSocketThread import AcceptingSocketThread
-
-def response(dbc, client_connection):
-    print("Responding...")
-    file_size = client_connection.recv(8)
-    file_size = int.from_bytes(file_size, byteorder='little', signed=True)
-    print("File size to reveice {} bytes".format(file_size))
-    bytes_received = 0
-    file_received = bytearray()
-    while bytes_received < file_size:
-        bytes_to_receive = min(file_size - bytes_received, 1024)
-        file_received.extend(client_connection.recv(bytes_to_receive))
-        bytes_received += bytes_to_receive
-    print("File received, {} bytes".format(len(file_received)))
-    img = Image.open(io.BytesIO(file_received))
-    print("Image Size: {}".format(img.size))
-    dbc.classify(img)
-    client_connection.shutdown(socket.SHUT_RDWR)
-    client_connection.close()
-    print("Client Connection Closed")
-
-def handler(ast, signum, frame):
-    print()
-    ast.close()
+from DogBreedClassificationServer import DogBreedClassificationServer
 
 def main():
-    dbc = DogBreedClassifier(labels_path="labels.txt")
-    resp = functools.partial(response, dbc)
-    ast = AcceptingSocketThread(resp)
-
-    signal.signal(signal.SIGINT, functools.partial(handler, ast))
-
-    ast.start()
-    ast.join()
+    parser = argparse.ArgumentParser(description='DogBreedClassificationServerMain')
+    parser.add_argument('-w', '--weights', default="parameters/dog_classification_parameters.pth", type=str, help='weights path to load')
+    parser.add_argument('-l', '--labels', default="labels.txt", type=str, help='human redable labels path')
+    parser.add_argument('-p', '--port', default=9999, type=int, help='server connection port')
+    args = parser.parse_args()
+    server = DogBreedClassificationServer(port=args.port, labels_path=args.labels, weights_path=args.weights)
+    server.start()
+    signal.signal(signal.SIGINT, lambda x, y: server.close())
+    server.join()
 
 if __name__ == "__main__":
     main()

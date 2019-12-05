@@ -10,7 +10,7 @@ from torch.nn import Linear
 
 class DogBreedClassifier():
 
-    def __init__(self, labels_path):
+    def __init__(self, labels_path, weights_path):
         self.dog_labels_start_index = 151
         with open(labels_path) as f:
             self.labels = eval(f.read())
@@ -20,7 +20,7 @@ class DogBreedClassifier():
         ])
         self.model = models.resnet50(pretrained=False)
         self.model.fc = Linear(in_features=2048, out_features=118, bias=True)
-        self.model.load_state_dict(torch.load("parameters/dog_classification_parameters.pth"))
+        self.model.load_state_dict(torch.load(weights_path))
         self.model.eval()
 
     def classify(self, img):
