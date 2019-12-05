@@ -1,16 +1,18 @@
 #include <iostream>
+#include <string>
 
-#include "SocketTCP.cpp"
+#include "SocketTCP.h"
 
 using namespace std;
 
 int main(){
     // Short Testing Routine:
     SocketTCP * my = new SocketTCP();
-
-    my->socket_set_server("127.0.0.1", 3456);
+    string ip = "127.0.0.1";
+    my->socket_set_server(ip.c_str(), 3456);
     my->socket_open();
-    my->socket_send_data("", 0);
+    string data = "";
+    my->socket_send_data(data.c_str(), 0);
     my->socket_close();
 
     cout << endl
