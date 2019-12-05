@@ -7,12 +7,8 @@
 using namespace std;
 
 // Private Methods for handling the Server Address:
-int SocketTCP::set_server_ip(const char * temp_ip){
-    if(temp_ip == NULL){
-        fprintf(stderr, "[FAIL] Can't set the Server IP\n");
-        return -1;
-    }
-    if(strcpy(server_ip, temp_ip) == NULL){
+int SocketTCP::set_server_ip(const std::string &temp_ip){
+    if(strcpy(server_ip, temp_ip.c_str()) == NULL){
         fprintf(stderr, "[FAIL] Can't set the Server IP\n");
         return -1;
     }
@@ -35,7 +31,7 @@ int SocketTCP::set_server_port(int temp_port){
     return 0;
 }
 
-int SocketTCP::create_server_address(const char * temp_ip, int temp_port){
+int SocketTCP::create_server_address(const std::string &temp_ip, int temp_port){
     if(set_server_ip(temp_ip) != 0) return -1;
     if(set_server_port(temp_port) != 0) return -1;
 
@@ -120,7 +116,7 @@ int SocketTCP::socket_get_server_port(){
     return server_port;
 }
 
-int SocketTCP::socket_set_server(const char * _server_ip, int _server_port){
+int SocketTCP::socket_set_server(const std::string &_server_ip, int _server_port){
     if(socket_is_alive == 1){
         char temp_error[256];
         char temp_warning[256];
@@ -159,7 +155,7 @@ int SocketTCP::socket_open(){
     return 0;
 }
 
-int SocketTCP::socket_open(const char * _server_ip, int _server_port){
+int SocketTCP::socket_open(const std::string &_server_ip, int _server_port){
     if(socket_is_alive == 1){
         fprintf(stderr, "[FAIL] Can't create the socket - Socket already alive\n");
         return -1;
@@ -196,7 +192,7 @@ int SocketTCP::socket_close(){
     return 0;
 }
 
-int SocketTCP::socket_send_data(const char * data, int data_dim){
+int SocketTCP::socket_send_data(const void* data, size_t data_dim){
     if(socket_is_alive == 0){
         fprintf(stderr, "[FAIL] Can't send data - Socket is not alive\n");
         return -1;
@@ -207,10 +203,8 @@ int SocketTCP::socket_send_data(const char * data, int data_dim){
         return -1;
     }
 
-    strncpy(buffer_to_send, "", BUFF_SEND_MAX_SIZE);
-    strncpy(buffer_to_send, data, BUFF_SEND_MAX_SIZE);
 
-    if(send(socket_descriptor, buffer_to_send, BUFF_SEND_MAX_SIZE, 0) == -1){
+    if(send(socket_descriptor, data, data_dim, 0) == -1){
         fprintf(stderr, "[FAIL] Can't send data - Error sending data\n");
         return -1;
     }

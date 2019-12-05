@@ -34,11 +34,11 @@ class SocketTCP{
         char buffer_to_recv[BUFF_RECV_MAX_SIZE];
 
         // Private Methods for handling the Server Address:
-        int set_server_ip(const char * temp_ip);
+        int set_server_ip(const std::string &temp_ip);
 
         int set_server_port(int temp_port);
 
-        int create_server_address(const char * temp_ip, int temp_port);
+        int create_server_address(const std::string &temp_ip, int temp_port);
 
         int check_server_address();
 
@@ -59,16 +59,16 @@ class SocketTCP{
 
         int socket_get_server_port();
 
-        int socket_set_server(const char * _server_ip, int _server_port);
+        int socket_set_server(const std::string &_server_ip, int _server_port);
 
         // Exposed Public Methods for Operations: 
         int socket_open();
 
-        int socket_open(const char * _server_ip, int _server_port);
+        int socket_open(const std::string &_server_ip, int _server_port);
 
         int socket_close();
 
-        int socket_send_data(const char * data, int data_dim);
+        int socket_send_data(const void * data, size_t data_dim);
 
         // TODO: socket_recv_data()
 };
