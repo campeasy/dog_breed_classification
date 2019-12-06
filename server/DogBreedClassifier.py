@@ -20,7 +20,7 @@ class DogBreedClassifier():
         ])
         self.model = models.resnet50(pretrained=False)
         self.model.fc = Linear(in_features=2048, out_features=118, bias=True)
-        self.model.load_state_dict(torch.load(weights_path))
+        self.model.load_state_dict(torch.load(weights_path, map_location=torch.device('cpu')))
         self.model.eval()
 
     def classify(self, img):
