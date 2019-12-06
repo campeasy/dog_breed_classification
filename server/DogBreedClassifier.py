@@ -29,9 +29,12 @@ class DogBreedClassifier():
             out = out[0].softmax(dim=0)
             out_sort = out.sort(descending=True)
             result = list(zip(out_sort[1][:10].tolist(), out_sort[0][:10].tolist()))
+            final_string = ""
             for idx, probability in result:
-                print("{:.2f}%  {}".format(probability*100, self.labels[self.dog_labels_start_index + idx]))
-            return result
+                current = "{:.2f}%  {}".format(probability*100, self.labels[self.dog_labels_start_index + idx])
+                final_string += current + "\n"
+            print(final_string)
+            return final_string
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='PyTorch Dog Classification Test')

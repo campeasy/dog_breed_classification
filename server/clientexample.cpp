@@ -56,6 +56,9 @@ int main(int argc, char const *argv[])
 		bytes_sent += bytes_read;
 	}
 	std::cout<<"File sent"<<std::endl;
+	char result[BUFFER_SIZE];
+	recv(sock, result, BUFFER_SIZE, 0);
+	std::cout<<std::string(result)<<std::endl;
 	fclose(file_ptr);
 	close(sock);
 	return 0;

@@ -15,7 +15,7 @@ int main(){
     const string ip = "127.0.0.1";
     my->socket_set_server(ip, 9999);
     my->socket_open();
-
+    
     FILE* file_ptr = fopen("../server/test_images/dog5.jpg", "r");
     fseek(file_ptr, 0, SEEK_END);
     long file_size = ftell(file_ptr);
@@ -34,6 +34,12 @@ int main(){
         bytes_sent += bytes_read;
     }
     std::cout<<"File sent"<<std::endl;
+
+    char result[BUFFER_SIZE];
+    size_t bytes_to_receive = BUFFER_SIZE;
+    my->socket_recv_data(result, BUFFER_SIZE);
+    cout << string(result) << endl;
+
     fclose(file_ptr);
     my->socket_close();
 

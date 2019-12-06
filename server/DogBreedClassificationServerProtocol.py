@@ -32,10 +32,11 @@ class DogBreedClassificationServerProtocol():
 
         img_file_bytes = self.__get_image_file_bytes(client_socket)
 
-        # TODO response
         img = Image.open(io.BytesIO(img_file_bytes))
         print("Image Size: {}".format(img.size))
-        self.dog_breed_classifier.classify(img)
+        result = self.dog_breed_classifier.classify(img)
+        result = result.encode('utf-8')
+        client_socket.send(result)
 
         client_socket.shutdown(socket.SHUT_RDWR)
         client_socket.close()
