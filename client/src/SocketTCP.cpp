@@ -17,7 +17,7 @@ int SocketTCP::set_server_ip(const std::string &temp_ip){
     return 0;
 }
 
-int SocketTCP::set_server_port(int temp_port){
+int SocketTCP::set_server_port(const int temp_port){
     if(temp_port < 0 || temp_port > 65353){
         fprintf(stderr, "[FAIL] Can't use Port %d - Port not valid\n", temp_port);
         return -1;
@@ -31,7 +31,7 @@ int SocketTCP::set_server_port(int temp_port){
     return 0;
 }
 
-int SocketTCP::create_server_address(const std::string &temp_ip, int temp_port){
+int SocketTCP::create_server_address(const std::string &temp_ip, const int temp_port){
     if(set_server_ip(temp_ip) != 0) return -1;
     if(set_server_port(temp_port) != 0) return -1;
 
@@ -94,9 +94,6 @@ SocketTCP::SocketTCP(){
 
     strcpy(server_ip, "\0");
     server_port = -1;
-
-    strcpy(buffer_to_send, "\0");
-    strcpy(buffer_to_recv, "\0");
 }
 
 SocketTCP::~SocketTCP(){
@@ -116,7 +113,7 @@ int SocketTCP::socket_get_server_port(){
     return server_port;
 }
 
-int SocketTCP::socket_set_server(const std::string &_server_ip, int _server_port){
+int SocketTCP::socket_set_server(const std::string &_server_ip, const int _server_port){
     if(socket_is_alive == 1){
         char temp_error[256];
         char temp_warning[256];
@@ -155,7 +152,7 @@ int SocketTCP::socket_open(){
     return 0;
 }
 
-int SocketTCP::socket_open(const std::string &_server_ip, int _server_port){
+int SocketTCP::socket_open(const std::string &_server_ip, const int _server_port){
     if(socket_is_alive == 1){
         fprintf(stderr, "[FAIL] Can't create the socket - Socket already alive\n");
         return -1;
@@ -192,17 +189,16 @@ int SocketTCP::socket_close(){
     return 0;
 }
 
-int SocketTCP::socket_send_data(const void* data, size_t data_dim){
+int SocketTCP::socket_send_data(const void * data, const size_t data_dim){
     if(socket_is_alive == 0){
         fprintf(stderr, "[FAIL] Can't send data - Socket is not alive\n");
         return -1;
     }
 
     if(data_dim > BUFF_SEND_MAX_SIZE){
-        fprintf(stderr, "[FAIL] Can't send data - Too much data\n");
+        fprintf(stderr, "[FAIL] Can't send data - Too much data to send\n");
         return -1;
     }
-
 
     if(send(socket_descriptor, data, data_dim, 0) == -1){
         fprintf(stderr, "[FAIL] Can't send data - Error sending data\n");
@@ -210,5 +206,25 @@ int SocketTCP::socket_send_data(const void* data, size_t data_dim){
     }
 
     fprintf(stdout, "[OK] Data sent correctly\n");
+    return 0;
+}
+
+int SocketTCP::socket_recv_data(void * buffer, const size_t buffer_dim ){
+    if(socket_is_alive == 0){
+        fprintf(stderr, "[FAIL] Can't receive data - Socket is not alive\n");
+        return -1;
+    }
+
+    if(buffer_dim > BUFF_RECV_MAX_SIZE){
+        fprintf(stderr, "[FAIL] Can't receive data - Too much data to receive\n");
+        return -1;
+    }
+
+    if(recv(socket_descriptor, buffer, buffer_dim, 0) == -1){
+        fprintf(stderr, "[FAIL] Can't receive data - Error receiving data\n");
+        return -1;
+    }
+
+    fprintf(stdout, "[OK] Data received correctly\n");
     return 0;
 }

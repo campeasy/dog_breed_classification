@@ -4,6 +4,7 @@
 #include "SocketTCP.h"
 
 using namespace std;
+
 typedef unsigned char byte;
 
 #define BUFFER_SIZE 1024
@@ -15,7 +16,7 @@ int main(){
     my->socket_set_server(ip, 9999);
     my->socket_open();
 
-    FILE* file_ptr = fopen("../server/test_images/dog2.jpg", "r");
+    FILE* file_ptr = fopen("../server/test_images/dog5.jpg", "r");
     fseek(file_ptr, 0, SEEK_END);
     long file_size = ftell(file_ptr);
     rewind(file_ptr);

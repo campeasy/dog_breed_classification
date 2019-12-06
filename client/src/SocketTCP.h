@@ -1,5 +1,5 @@
 /*
-    C++ Wrapper for Socket
+    C++ Wrapper for Socket in C
 */
 
 #pragma once
@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/types.h>
+#include <errno.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
@@ -29,16 +29,12 @@ class SocketTCP{
         int server_port;
         struct sockaddr_in server_address;
 
-        // Data Buffers:
-        char buffer_to_send[BUFF_SEND_MAX_SIZE];
-        char buffer_to_recv[BUFF_RECV_MAX_SIZE];
-
         // Private Methods for handling the Server Address:
         int set_server_ip(const std::string &temp_ip);
 
-        int set_server_port(int temp_port);
+        int set_server_port(const int temp_port);
 
-        int create_server_address(const std::string &temp_ip, int temp_port);
+        int create_server_address(const std::string &temp_ip, const int temp_port);
 
         int check_server_address();
 
@@ -59,16 +55,18 @@ class SocketTCP{
 
         int socket_get_server_port();
 
-        int socket_set_server(const std::string &_server_ip, int _server_port);
+        int socket_set_server(const std::string &_server_ip, const int _server_port);
 
         // Exposed Public Methods for Operations: 
         int socket_open();
 
-        int socket_open(const std::string &_server_ip, int _server_port);
+        int socket_open(const std::string &_server_ip, const int _server_port);
 
         int socket_close();
 
-        int socket_send_data(const void * data, size_t data_dim);
+        int socket_send_data(const void * data, const size_t data_dim);
+
+        int socket_recv_data(void * buffer, const size_t buffer_dim);
 
         // TODO: socket_recv_data()
 };
