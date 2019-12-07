@@ -1,13 +1,10 @@
 /*
     December 2019
-    DogBreed Classification
+    DogBreed Classification - Salvatore Campisi, Daniele Calanna
     Advanced Programming Languages
 
     C++ Wrapper for Socket in C
-
-    Written by Salvatore Campisi e Daniele Calanna
 */
-
 #pragma once
 
 #include <stdio.h>
@@ -49,6 +46,10 @@ class SocketTCP{
     public:
         SocketTCP();
         ~SocketTCP();
+
+        // Public Methods for Getting Max that the Socket can Send/Receive:
+        size_t get_max_sendable_data();
+        size_t get_max_receivable_data();
 
         // Public Methods for Getting/Setting Server Address Informations:
         std::string socket_get_server_ip();
