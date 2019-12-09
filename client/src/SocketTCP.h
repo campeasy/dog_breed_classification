@@ -1,6 +1,6 @@
 /*
     December 2019
-    DogBreed Classification - Salvatore Campisi, Daniele Calanna
+    Dog Breed Classification - Salvatore Campisi, Daniele Calanna
     Advanced Programming Languages
 
     C++ Wrapper for Socket in C
@@ -18,8 +18,6 @@
 #include <string>
 
 #define IP_MAX_SIZE 1024
-#define BUFF_SEND_MAX_SIZE 1024
-#define BUFF_RECV_MAX_SIZE 1024
 
 class SocketTCP{
     private:
@@ -47,10 +45,6 @@ class SocketTCP{
         SocketTCP();
         ~SocketTCP();
 
-        // Public Methods for Getting Max that the Socket can Send/Receive:
-        size_t get_max_sendable_data();
-        size_t get_max_receivable_data();
-
         // Public Methods for Getting/Setting Server Address Informations:
         std::string socket_get_server_ip();
         int socket_get_server_port();
@@ -61,5 +55,6 @@ class SocketTCP{
         int socket_open(const std::string &_server_ip, const int _server_port);
         int socket_close();
         int socket_send_data(const void * data, const size_t data_dim);
+        int socket_send_data(const void * data, const size_t data_dim, ssize_t &bytes_sent);
         int socket_recv_data(void * buffer, const size_t buffer_dim);
 };

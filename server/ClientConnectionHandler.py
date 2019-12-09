@@ -1,8 +1,15 @@
+#
+#    December 2019
+#    Dog Breed Classification - Salvatore Campisi, Daniele Calanna
+#    Advanced Programming Languages
+#
+#    Client Connection Handler (Server Side)
+#
+
 import sys
 import socket
 
 from threading import Thread
-from concurrent.futures import ThreadPoolExecutor
 
 # ClientConnectionHandler must be treated as a Singleton Class
 class ClientConnectionHandler(Thread):
@@ -15,7 +22,6 @@ class ClientConnectionHandler(Thread):
         self.__server_socket = self.__initializing_socket(port)
 
         self.__function_to_run = function_to_run
-        self.__thread_pool = ThreadPoolExecutor(200)
 
     def __initializing_socket(self, port):
         try:
@@ -44,19 +50,17 @@ class ClientConnectionHandler(Thread):
                 client_connection, client_address = self.__server_socket.accept()
                 print("\n[OK - ClientConnectionHandler] New Socket connected with the Client at ({} : {})".format(client_address[0], str(client_address[1])))
                 print("[INFO - ClientConnectionHandler] Submitting Client request to the Server Protocol")
-                self.__thread_pool.submit(self.__function_to_run, (client_connection))
+                self.__function_to_run(client_connection)
 
             except socket.error as msg:
                 print("[FAIL - ClientConnectionHandler] Error while accepting Client connection and request")
 
-        print("[INFO - ClientConnectionHandler] Completing the remaining requests and Closing ...")
-        self.__thread_pool.shutdown(wait=True)
+        print("[OK - ClientConnectionHandler] Accepting Socket correctly closed")
 
     def close(self):
         if not self.__is_closing:
             self.__is_closing = True
 
-            self.__accepting_socket.shutdown(socket.SHUT_RDWR)
-            self.__accepting_socket.close()
-
-            print("[OK - ClientConnectionHandler] Accepting Socket correctly closed")
+            self.__server_socket.shutdown(socket.SHUT_RDWR)
+            self.__server_socket.close()
+            self.join()

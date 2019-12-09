@@ -1,3 +1,11 @@
+#
+#    December 2019
+#    Dog Breed Classification - Salvatore Campisi, Daniele Calanna
+#    Advanced Programming Languages
+#
+#    Server Application Protocol
+#
+
 import os
 import io
 import sys
@@ -41,8 +49,9 @@ class ServerApplicationProtocol():
         # Classyfing the Image:
         result = self.__dog_breed_classifier.classify(img)
         result = result.encode('utf-8')
-
-        # Sending the result to the Client
+        
+        # Sending result dimension and the result itself to the Client
+        client_socket.send(len(result).to_bytes(8, byteorder='little', signed=False))
         client_socket.send(result)
         print("[OK - ServerApplicationProtocol] Result correctly sent to the Client")
 

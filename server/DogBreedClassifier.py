@@ -1,3 +1,11 @@
+#
+#    December 2019
+#    Dog Breed Classification - Salvatore Campisi, Daniele Calanna
+#    Advanced Programming Languages
+#
+#    Dog Breed Classifier
+#
+
 import argparse
 import torch
 import torchvision.models as models

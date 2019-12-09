@@ -1,15 +1,15 @@
 #include <iostream>
 #include <string>
 
-#include "ClientAP.h"
+#include "ClientApplicationProtocol.h"
 
 using namespace std;
 
 void test(){
-    ClientAP * my = new ClientAP();
+    ClientApplicationProtocol * my = new ClientApplicationProtocol();
     std::string result;
 
-    result = my->perform("../test_images/dog5.jpg", "127.0.0.1", 9999);
+    result = my->perform("../test_images/dog5.jpg", "127.0.0.1", 10000);
 
     cout << endl << result << endl;
     return;

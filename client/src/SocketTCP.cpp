@@ -1,6 +1,6 @@
 /*
     December 2019
-    DogBreed Classification - Salvatore Campisi, Daniele Calanna
+    Dog Breed Classification - Salvatore Campisi, Daniele Calanna
     Advanced Programming Languages
 
     C++ Wrapper for Socket in C
@@ -115,14 +115,6 @@ int SocketTCP::socket_get_server_port(){
     return server_port;
 }
 
-size_t SocketTCP::get_max_sendable_data(){
-    return BUFF_SEND_MAX_SIZE;
-}
-
-size_t SocketTCP::get_max_receivable_data(){
-    return BUFF_RECV_MAX_SIZE;
-}
-
 int SocketTCP::socket_set_server(const std::string &_server_ip, const int _server_port){
     if(socket_is_alive == 1){
         char temp_error[256];
@@ -200,17 +192,18 @@ int SocketTCP::socket_close(){
 }
 
 int SocketTCP::socket_send_data(const void * data, const size_t data_dim){
+    ssize_t bytes_sent;
+    return socket_send_data(data, data_dim, bytes_sent);
+}
+
+int SocketTCP::socket_send_data(const void * data, const size_t data_dim, ssize_t &bytes_sent){
     if(socket_is_alive == 0){
         fprintf(stderr, "[FAIL - SocketTCP] Can't send data - Socket is not alive\n");
         return -1;
     }
 
-    if(data_dim > BUFF_SEND_MAX_SIZE){
-        fprintf(stderr, "[FAIL - SocketTCP] Can't send data - Too much data to send\n");
-        return -1;
-    }
-
-    if(send(socket_descriptor, data, data_dim, 0) == -1){
+    bytes_sent = send(socket_descriptor, data, data_dim, 0);
+    if(bytes_sent == -1){
         fprintf(stderr, "[FAIL - SocketTCP] Can't send data - Error sending data\n");
         return -1;
     }
@@ -219,14 +212,9 @@ int SocketTCP::socket_send_data(const void * data, const size_t data_dim){
     return 0;
 }
 
-int SocketTCP::socket_recv_data(void * buffer, const size_t buffer_dim ){
+int SocketTCP::socket_recv_data(void * buffer, const size_t buffer_dim){
     if(socket_is_alive == 0){
         fprintf(stderr, "[FAIL - SocketTCP] Can't receive data - Socket is not alive\n");
-        return -1;
-    }
-
-    if(buffer_dim > BUFF_RECV_MAX_SIZE){
-        fprintf(stderr, "[FAIL - SocketTCP] Can't receive data - Too much data to receive\n");
         return -1;
     }
 
