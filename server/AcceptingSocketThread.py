@@ -2,7 +2,6 @@ import sys
 import socket
 
 from threading import Thread
-from concurrent.futures import ThreadPoolExecutor
 
 class AcceptingSocketThread(Thread):
 
@@ -14,7 +13,6 @@ class AcceptingSocketThread(Thread):
 
         self.accepting_socket = self.__init_accepting_socket(port)
 
-        self.pool = ThreadPoolExecutor(200)
         self.response = response
 
     def __init_accepting_socket(self, port):
@@ -40,14 +38,11 @@ class AcceptingSocketThread(Thread):
         print("Listening...")
         while not self.is_closing:
             try:
-                conn, addr = self.accepting_socket.accept()
+                client_connection, addr = self.accepting_socket.accept()
                 print("[-] Connected to {} : {}".format(addr[0], str(addr[1])))
-                self.pool.submit(self.response, (conn))
+                self.response(client_connection)
             except socket.error as msg:
                 print("Stop listening")
-
-        print("Closing clients connections...")
-        self.pool.shutdown(wait=True)
 
     def close(self):
         print("Closing...")
