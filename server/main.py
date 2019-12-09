@@ -2,7 +2,7 @@ import signal
 import argparse
 import functools
 
-from DogBreedClassificationServer import DogBreedClassificationServer
+from Server import Server
 
 def main():
     parser = argparse.ArgumentParser(description='DogBreedClassificationServerMain')
@@ -10,7 +10,8 @@ def main():
     parser.add_argument('-l', '--labels', default="labels.txt", type=str, help='human redable labels path')
     parser.add_argument('-p', '--port', default=9999, type=int, help='server connection port')
     args = parser.parse_args()
-    server = DogBreedClassificationServer(port=args.port, labels_path=args.labels, weights_path=args.weights)
+
+    server = Server(port=args.port, labels_path=args.labels, weights_path=args.weights)
     server.start()
     signal.signal(signal.SIGINT, lambda x, y: server.close())
     server.join()

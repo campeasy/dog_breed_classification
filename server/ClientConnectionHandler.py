@@ -40,16 +40,16 @@ class ClientConnectionHandler(Thread):
         self.__server_socket.listen(queue_max_size)
 
         while not self.__is_closing:
-            print("\n[ClientConnectionHandler] Waiting for Clients connection attempts ...")
             try:
                 client_connection, client_address = self.__server_socket.accept()
-                print("[OK - ClientConnectionHandler] New Socket connected with the Client at ({} : {})".format(client_address[0], str(client_address[1])))
-
+                print("\n[OK - ClientConnectionHandler] New Socket connected with the Client at ({} : {})".format(client_address[0], str(client_address[1])))
+                print("[INFO - ClientConnectionHandler] Submitting Client request to the Server Protocol")
                 self.__thread_pool.submit(self.__function_to_run, (client_connection))
-            except socket.error as msg:
-                print("[FAIL - ClientConnectionHandler] Error while accepting Client connection")
 
-        print("[ClientConnectionHandler] Completing the remaining requests and Closing ...")
+            except socket.error as msg:
+                print("[FAIL - ClientConnectionHandler] Error while accepting Client connection and request")
+
+        print("[INFO - ClientConnectionHandler] Completing the remaining requests and Closing ...")
         self.__thread_pool.shutdown(wait=True)
 
     def close(self):
@@ -59,4 +59,4 @@ class ClientConnectionHandler(Thread):
             self.__accepting_socket.shutdown(socket.SHUT_RDWR)
             self.__accepting_socket.close()
 
-            print("[ClientConnectionHandler] Accepting Socket correctly closed")
+            print("[OK - ClientConnectionHandler] Accepting Socket correctly closed")

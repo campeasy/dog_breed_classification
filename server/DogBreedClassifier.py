@@ -1,11 +1,9 @@
 import argparse
-
-from PIL import Image
-
 import torch
 import torchvision.models as models
 import torchvision.transforms as transforms
 
+from PIL import Image
 from torch.nn import Linear
 
 class DogBreedClassifier():
@@ -33,7 +31,8 @@ class DogBreedClassifier():
             for idx, probability in result:
                 current = "{:.2f}%  {}".format(probability*100, self.labels[self.dog_labels_start_index + idx])
                 final_string += current + "\n"
-            print(final_string)
+
+            print("[OK - DogBreedClassifier] Image correctly classified")
             return final_string
 
 if __name__ == "__main__":
