@@ -72,7 +72,7 @@ int ClientApplicationProtocol::response(std::string &result){
     err = socket->socket_recv_data(result_buffer, response_size);
     if(err == -1) return -1;
     result = std::string(result_buffer);
-    delete result_buffer;
+    delete[] result_buffer;
 
     fprintf(stdout, "[Ok - ClientApplicationProtocol] Response completed correctly\n");
     return 0;
