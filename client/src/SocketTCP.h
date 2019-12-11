@@ -3,6 +3,7 @@
     Dog Breed Classification - Salvatore Campisi, Daniele Calanna
     Advanced Programming Languages
 
+    Socket TCP
     C++ Wrapper for Socket in C
 */
 #pragma once

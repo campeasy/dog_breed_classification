@@ -2,28 +2,17 @@
 #include <string>
 
 
-#include "ClientProxy.h"
-#include "ClientApplicationProtocol.h"
+#include "ClientProxyFactory.h"
 
 using namespace std;
 
 void test(){
-    // ClientApplicationProtocol * my = new ClientApplicationProtocol();
-    // std::string result;
+    std::string result;
 
-    // result = my->perform("../test_images/dog5.jpg", "127.0.0.1", 10000);
+    ClientProxyInterface * proxy = ClientProxyFactory::create_ClientProxyInterface();
+    result = proxy->classify_image("../test_images/dog5.jpg");
 
-    // cout << endl << result << endl;
-    // return;
-
-    ClientProxy * proxy = new ClientProxy();
-
-    std::string str("127.0.0.1");
-    proxy->add_server_address(str, 9999);
-    proxy->add_server_address(str, 6555);
-
-    proxy->classify_image("../test_images/dog5.jpg");
-
+    fprintf(stdout, "\n%s", result.c_str());
     return;
 }
 
