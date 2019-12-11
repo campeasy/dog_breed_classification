@@ -10,5 +10,5 @@
 
 class ClientProxyInterface{
     public:
-        virtual std::string classify_image() = 0;
+        virtual std::string classify_image(const std::string image_pathname) = 0;
 };

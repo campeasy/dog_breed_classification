@@ -92,13 +92,15 @@ std::string ClientApplicationProtocol::perform(const std::string image_pathname,
 
     err = request(image_pathname, server_ip, server_port);
     if(err == -1){
-        std::string str("Client Application Protocol Error - Bad Request");
+        // Bad Request:
+        std::string str(CAP_BAD_REQUEST);
         return str;
     }
     std::string result;
     err = response(result);
     if(err == -1){
-        std::string str("Client Application Protocol Error - Bad Response");
+        // Bad Response:
+        std::string str(CAP_BAD_RESPONSE);
         return str;
     }
 

@@ -15,6 +15,9 @@
 
 #include "SocketTCP.h"
 
+#define CAP_BAD_REQUEST "-1BRQ"
+#define CAP_BAD_RESPONSE "-1BRP" 
+
 class ClientApplicationProtocol{
     private:
         SocketTCP * socket;
