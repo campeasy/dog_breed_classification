@@ -1,23 +1,18 @@
-#include <iostream>
 #include <string>
 
+#include "Client.h"
 
-#include "ClientProxyFactory.h"
+int main(int argc, char *argv[]){
+    if(argc < 2){
+        fprintf(stderr, "DogBreedClassifier - Usage: ");
+        fprintf(stderr, "%s image_pathname", argv[0]);
 
-using namespace std;
+        return -1;
+    }
 
-void test(){
-    std::string result;
+    std::string image_pathname(argv[1]);
 
-    ClientProxyInterface * proxy = ClientProxyFactory::create_ClientProxyInterface();
-    result = proxy->classify_image("../test_images/dog5.jpg");
-
-    fprintf(stdout, "\n%s", result.c_str());
-    return;
-}
-
-int main(){
-    test();
-
-    return 0;
+    Client * c = new Client();
+    c->run_client(image_pathname);
+    delete c;
 }
