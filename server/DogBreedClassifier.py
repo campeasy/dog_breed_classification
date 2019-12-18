@@ -34,10 +34,12 @@ class DogBreedClassifier():
             out = self.model(self.transform(img).unsqueeze(0))
             out = out[0].softmax(dim=0)
             out_sort = out.sort(descending=True)
-            result = list(zip(out_sort[1][:10].tolist(), out_sort[0][:10].tolist()))
+            probabilities_list = out_sort[0][:3].tolist()
+            result = list(zip(out_sort[1][:3].tolist(), probabilities_list))
+            probabilities_sum = sum(probabilities_list)
             final_string = ""
             for idx, probability in result:
-                current = "{:.2f}%  {}".format(probability*100, self.labels[self.dog_labels_start_index + idx])
+                current = "{:.2f}%  {}".format(probability/probabilities_sum*100, self.labels[self.dog_labels_start_index + idx])
                 final_string += current + "\n"
 
             print("[OK - DogBreedClassifier] Image correctly classified")

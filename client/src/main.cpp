@@ -5,7 +5,7 @@
 int main(int argc, char *argv[]){
     if(argc < 2){
         fprintf(stderr, "DogBreedClassifier - Usage: ");
-        fprintf(stderr, "%s image_pathname", argv[0]);
+        fprintf(stderr, "%s image_pathname/n", argv[0]);
 
         return -1;
     }
