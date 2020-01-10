@@ -9,17 +9,25 @@
 import os
 import io
 import sys
+import time
+import pandas as pd
 import signal
 import socket
 import functools
+from datetime import datetime
 
 from PIL import Image
 from DogBreedClassifier import DogBreedClassifier
 
 class ServerApplicationProtocol():
 
-    def __init__(self, dog_breed_classifier):
+    def __init__(self, dog_breed_classifier, stats_path="stats.csv"):
         self.__dog_breed_classifier = dog_breed_classifier
+        self.__stats_path = stats_path
+        if os.path.isfile(self.__stats_path):
+            self.dataframe = pd.read_csv(self.__stats_path)
+        else:
+            self.dataframe = pd.DataFrame(columns=['Timestamp', 'Class', 'PercentageConfidence'])
 
     def __get_image_file_bytes(self, client_socket):
         file_size = client_socket.recv(8)
@@ -40,6 +48,10 @@ class ServerApplicationProtocol():
     def manage_request(self, client_socket):
         print("[INFO - ServerApplicationProtocol] Start managing the Client request")
 
+        # current date and time
+        now = datetime.now()
+        timestamp = datetime.timestamp(now)
+
         # Receiving the Image:
         img_file_bytes = self.__get_image_file_bytes(client_socket)
 
@@ -48,8 +60,18 @@ class ServerApplicationProtocol():
 
         # Classyfing the Image:
         result = self.__dog_breed_classifier.classify(img)
-        result = result.encode('utf-8')
         
+        first_line = result.split('\n', 1)[0]
+        splitted_first_line = first_line.split('%', 1)
+        percentage = splitted_first_line[0]
+        class_name = splitted_first_line[1].strip()
+
+        print(timestamp, class_name, percentage)
+        self.dataframe = self.dataframe.append(pd.Series(data={'Timestamp': timestamp, 'Class': class_name, 'PercentageConfidence': percentage}), ignore_index=True)
+        print(self.dataframe)
+        self.dataframe.to_csv(self.__stats_path, index=False)
+
+        result = result.encode('utf-8')
         # Sending result dimension and the result itself to the Client
         client_socket.send(len(result).to_bytes(8, byteorder='little', signed=False))
         client_socket.send(result)
