@@ -33,6 +33,7 @@ class ClientProxy : public ClientProxyInterface{
         void remove_server_address(const std::string ip, const int port);
 
         // Implementation of the virtual method:
-        std::string classify_image(const std::string image_pathname);
+        std::string classify_image(const std::string image_pathname) override;
+        void feedback(const bool satisfaction) override;
 
 };

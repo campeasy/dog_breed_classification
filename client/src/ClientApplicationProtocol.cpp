@@ -62,7 +62,7 @@ int ClientApplicationProtocol::request(const std::string image_pathname, const s
 
 int ClientApplicationProtocol::response(std::string &result){
     int err = 0;
-    
+
     size_t response_size;
     err = socket->socket_recv_data(&response_size, sizeof(size_t));
     if(err == -1) return -1;
@@ -105,4 +105,10 @@ std::string ClientApplicationProtocol::perform(const std::string image_pathname,
     }
 
     return result;
+}
+
+void ClientApplicationProtocol::send_feedback(const bool satisfaction){
+    int err = socket->socket_send_data(&satisfaction, sizeof(bool));
+    //if(err == -1) return -1;
+    //return 0;
 }

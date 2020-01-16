@@ -18,6 +18,15 @@ Client::~Client(){
     delete proxy;
 }
 
+bool Client::get_feedback_from_user(){
+    fprintf(stdout, "Are you satisfied? (Yes/No): ");
+    char feedback;
+    while(!(feedback == 'Y' || feedback == 'N' || feedback == 'y' || feedback == 'n')){
+        fscanf(stdin, "%c", &feedback);
+    }
+    return (feedback == 'Y' || feedback == 'y');
+}
+
 void Client::run_client(const std::string image_pathname){
     std::string result;
 
@@ -26,5 +35,7 @@ void Client::run_client(const std::string image_pathname){
     fprintf(stdout, "\n---------------[CLIENT - COMPUTATION RESULT]---------------\n");
     fprintf(stdout, "%s", result.c_str());
     fprintf(stdout, "-----------------------------------------------------------\n");
+
+    proxy->feedback(get_feedback_from_user());
     return;
 }

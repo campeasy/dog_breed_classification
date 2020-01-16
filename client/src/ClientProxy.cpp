@@ -71,3 +71,7 @@ std::string ClientProxy::classify_image(const std::string image_pathname){
 
     return result;
 }
+
+void ClientProxy::feedback(const bool satisfaction){
+    client_application_protocol->send_feedback(satisfaction);
+}

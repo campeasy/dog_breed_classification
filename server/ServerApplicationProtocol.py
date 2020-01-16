@@ -21,13 +21,13 @@ from DogBreedClassifier import DogBreedClassifier
 
 class ServerApplicationProtocol():
 
-    def __init__(self, dog_breed_classifier, stats_path="stats.csv"):
+    def __init__(self, dog_breed_classifier, stats_path="stats/stats.csv"):
         self.__dog_breed_classifier = dog_breed_classifier
         self.__stats_path = stats_path
         if os.path.isfile(self.__stats_path):
             self.dataframe = pd.read_csv(self.__stats_path)
         else:
-            self.dataframe = pd.DataFrame(columns=['Timestamp', 'Class', 'PercentageConfidence'])
+            self.dataframe = pd.DataFrame(columns=['Timestamp', 'Class', 'PercentageConfidence', 'Satisfaction'])
 
     def __get_image_file_bytes(self, client_socket):
         file_size = client_socket.recv(8)
@@ -66,16 +66,19 @@ class ServerApplicationProtocol():
         percentage = splitted_first_line[0]
         class_name = splitted_first_line[1].strip()
 
-        print(timestamp, class_name, percentage)
-        self.dataframe = self.dataframe.append(pd.Series(data={'Timestamp': timestamp, 'Class': class_name, 'PercentageConfidence': percentage}), ignore_index=True)
-        print(self.dataframe)
-        self.dataframe.to_csv(self.__stats_path, index=False)
-
         result = result.encode('utf-8')
         # Sending result dimension and the result itself to the Client
         client_socket.send(len(result).to_bytes(8, byteorder='little', signed=False))
         client_socket.send(result)
         print("[OK - ServerApplicationProtocol] Result correctly sent to the Client")
+
+        feedback = client_socket.recv(4)
+        feedback = int.from_bytes(feedback, byteorder='little', signed=False)
+        feedback = "Yes" if feedback == 1 else "No"
+        print("[OK - ServerApplicationProtocol] Feedback correctly collected from Client")
+
+        self.dataframe = self.dataframe.append(pd.Series(data={'Timestamp': timestamp, 'Class': class_name, 'PercentageConfidence': percentage, 'Satisfaction': feedback}), ignore_index=True)
+        self.dataframe.to_csv(self.__stats_path, index=False)
 
         client_socket.shutdown(socket.SHUT_RDWR)
         client_socket.close()

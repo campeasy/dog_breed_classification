@@ -1,3 +1,5 @@
 __pycache__
 train/parameters
 train/plots
+*.csv
+*.pdf

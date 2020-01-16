@@ -32,4 +32,5 @@ class ClientApplicationProtocol{
 
         // Performing a Request and returning a Response string:
         std::string perform(const std::string image_pathname, const std::string server_ip, const int server_port);
+        void send_feedback(const bool satisfaction);
 };

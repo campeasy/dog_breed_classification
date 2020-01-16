@@ -14,6 +14,7 @@ class Client{
     private:
         // Classificator Object:
         ClientProxyInterface * proxy;
+        bool get_feedback_from_user();
 
     public:
         Client();
