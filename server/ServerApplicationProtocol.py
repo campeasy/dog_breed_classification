@@ -80,6 +80,5 @@ class ServerApplicationProtocol():
         self.dataframe = self.dataframe.append(pd.Series(data={'Timestamp': timestamp, 'Class': class_name, 'PercentageConfidence': percentage, 'Satisfaction': feedback}), ignore_index=True)
         self.dataframe.to_csv(self.__stats_path, index=False)
 
-        client_socket.shutdown(socket.SHUT_RDWR)
         client_socket.close()
         print("[OK - ServerApplicationProtocol] Socket with the Client closed")

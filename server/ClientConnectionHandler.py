@@ -54,6 +54,7 @@ class ClientConnectionHandler(Thread):
 
             except socket.error as msg:
                 print("[FAIL - ClientConnectionHandler] Error while accepting Client connection and request")
+                print(msg)
 
         print("[OK - ClientConnectionHandler] Accepting Socket correctly closed")
 
