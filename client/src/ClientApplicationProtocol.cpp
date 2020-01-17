@@ -109,6 +109,5 @@ std::string ClientApplicationProtocol::perform(const std::string image_pathname,
 
 void ClientApplicationProtocol::send_feedback(const bool satisfaction){
     int err = socket->socket_send_data(&satisfaction, sizeof(bool));
-    //if(err == -1) return -1;
-    //return 0;
+    socket->socket_close();
 }
