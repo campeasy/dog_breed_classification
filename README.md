@@ -1,2 +1,2 @@
-# dog_breed_classification_ClientServer
+# Dog Breed Classification
 Client/Server desktop application that allows client to make requests to the server, where each request contains the image of a dog. The Server, through appropriate methodologies of Deep Learning, will identify the breed of the dog present in the photo, and in the case in which the animal is an "half-breed", it will try to reconstruct which are the breeds that most contributed to its family tree.
